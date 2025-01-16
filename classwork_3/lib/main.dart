@@ -55,6 +55,29 @@ class _MyHomePageState extends State<MyHomePage> {
     radiusC.clear();
   }
 
+  bool validate() {
+    // not empty and not null and not negative and not zero and not string
+    if (gValue == "Rectangle") {
+      return heightC.text.isNotEmpty &&
+          widthC.text.isNotEmpty &&
+          int.tryParse(heightC.text) != null &&
+          int.tryParse(widthC.text) != null &&
+          int.parse(heightC.text) > 0 &&
+          int.parse(widthC.text) > 0;
+    } else if (gValue == "Triangle") {
+      return baseC.text.isNotEmpty &&
+          heightC.text.isNotEmpty &&
+          int.tryParse(baseC.text) != null &&
+          int.tryParse(heightC.text) != null &&
+          int.parse(baseC.text) > 0 &&
+          int.parse(heightC.text) > 0;
+    } else {
+      return radiusC.text.isNotEmpty &&
+          int.tryParse(radiusC.text) != null &&
+          int.parse(radiusC.text) > 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +139,27 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(height: 8),
             ElevatedButton(
               onPressed: () {
+                if (!validate()) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Please enter valid values'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  return;
+                }
+
                 if (gValue == "Rectangle") {
                   Navigator.push(
                     context,
