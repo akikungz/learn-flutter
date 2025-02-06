@@ -38,17 +38,20 @@ class _UserListState extends State<UserList> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+
   void resetControllers() {
     _nameController.clear();
     _emailController.clear();
     _passwordController.clear();
     _confirmPasswordController.clear();
+    _weightController.clear();
+    _heightController.clear();
   }
 
   bool incorrectPassword(String inputPassword, String password) {
     if (inputPassword != password) {
-      print(inputPassword);
-      print(password);
       showDialog(
         context: context,
         builder: (_) {
@@ -98,6 +101,16 @@ class _UserListState extends State<UserList> {
                 ),
                 obscureText: true,
               ),
+              TextField(
+                controller: _weightController,
+                decoration: const InputDecoration(labelText: 'Weight (kg)'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ),
+              TextField(
+                controller: _heightController,
+                decoration: const InputDecoration(labelText: 'Height (cm)'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ),
             ],
           ),
           actions: [
@@ -113,7 +126,9 @@ class _UserListState extends State<UserList> {
                 if (_nameController.text.isNotEmpty &&
                     _emailController.text.isNotEmpty &&
                     _passwordController.text.isNotEmpty &&
-                    _confirmPasswordController.text.isNotEmpty) {
+                    _confirmPasswordController.text.isNotEmpty &&
+                    _weightController.text.isNotEmpty &&
+                    _heightController.text.isNotEmpty) {
                   if (_passwordController.text !=
                       _confirmPasswordController.text) {
                     showDialog(
@@ -137,6 +152,8 @@ class _UserListState extends State<UserList> {
                     'name': _nameController.text,
                     'email': _emailController.text,
                     'password': _passwordController.text,
+                    'weight': double.parse(_weightController.text),
+                    'height': double.parse(_heightController.text),
                   });
                   setState(() {
                     resetControllers();
@@ -150,7 +167,7 @@ class _UserListState extends State<UserList> {
                       return AlertDialog(
                         title: const Text('Error'),
                         content: const Text(
-                          'Name, email, and password are required.',
+                          'Name, email, password, weight and height are required.',
                         ),
                         actions: [
                           TextButton(
@@ -305,6 +322,23 @@ class _UserListState extends State<UserList> {
     );
   }
 
+  double calculateBmi(double weight, double height) {
+    double heightMeter = height / 100;
+    return weight / (heightMeter * heightMeter);
+  }
+
+  String getBmiCategory(double bmi) {
+    if (bmi < 18.5) {
+      return 'Underweight';
+    } else if (bmi >= 18.5 && bmi < 24.9) {
+      return 'Normal weight';
+    } else if (bmi >= 25 && bmi < 29.9) {
+      return 'Overweight';
+    } else {
+      return 'Obesity';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -330,6 +364,11 @@ class _UserListState extends State<UserList> {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
+                double bmi = calculateBmi(
+                  snapshot.data![index]['weight'],
+                  snapshot.data![index]['height'],
+                );
+
                 return ListTile(
                   title: Text(snapshot.data![index]['name']),
                   subtitle: Column(
@@ -338,6 +377,10 @@ class _UserListState extends State<UserList> {
                       Text(snapshot.data![index]['email']),
                       Text(snapshot.data![index]['password']),
                       Text(snapshot.data![index]['created_at'].toString()),
+                      Text(snapshot.data![index]['weight'].toString()),
+                      Text(snapshot.data![index]['height'].toString()),
+                      Text('BMI: ${bmi.toStringAsFixed(2)}'),
+                      Text('Category: ${getBmiCategory(bmi)}'),
                     ],
                   ),
                   trailing: Row(

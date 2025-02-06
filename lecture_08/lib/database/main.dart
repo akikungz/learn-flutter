@@ -30,6 +30,8 @@ class DatabaseHelper {
         name TEXT,
         email TEXT,
         password TEXT,
+        weight REAL,
+        height REAL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     ''');
@@ -89,6 +91,8 @@ class DatabaseHelper {
         name: maps[i]['name'],
         email: maps[i]['email'],
         password: maps[i]['password'],
+        weight: maps[i]['weight'],
+        height: maps[i]['height'],
         createdAt: maps[i]['created_at'],
       );
     });
@@ -112,21 +116,5 @@ class DatabaseHelper {
   Future<void> clearUsers() async {
     var dbClient = await db;
     await dbClient!.delete('users');
-  }
-
-  Future<void> initializeUsers() async {
-    List<User> users = [
-      User(name: 'Alice', email: 'alice@example.com', password: '1234'),
-      User(name: 'Bob', email: 'bob@example.com', password: '4321'),
-      User(name: 'Charlie', email: 'charlie@example.com', password: '9870'),
-    ];
-
-    if ((await queryAllUsers()).isNotEmpty) {
-      return;
-    }
-
-    for (User user in users) {
-      await insertUsers(user);
-    }
   }
 }

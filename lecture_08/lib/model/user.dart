@@ -3,6 +3,8 @@ class User {
   final String name;
   final String email;
   final String password;
+  final double? weight;
+  final double? height;
   final String? createdAt;
 
   User({
@@ -10,6 +12,8 @@ class User {
     required this.name,
     required this.email,
     required this.password,
+    required this.weight,
+    required this.height,
     this.createdAt,
   });
 
@@ -19,13 +23,15 @@ class User {
       'name': name,
       'email': email,
       'password': password,
+      'weight': weight,
+      'height': height,
       'created_at': createdAt,
     };
   }
 
   @override
   String toString() {
-    return 'User{id: $id, name: $name, email: $email, password: $password, created_at: $createdAt}';
+    return 'User{id: $id, name: $name, email: $email, password: $password, weight: $weight, height: $height, created_at: $createdAt}';
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
@@ -34,6 +40,8 @@ class User {
       name: map['name'],
       email: map['email'],
       password: map['password'],
+      weight: map['weight'],
+      height: map['height'],
       createdAt: map['created_at'],
     );
   }
