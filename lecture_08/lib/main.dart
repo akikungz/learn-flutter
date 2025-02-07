@@ -330,12 +330,28 @@ class _UserListState extends State<UserList> {
   String getBmiCategory(double bmi) {
     if (bmi < 18.5) {
       return 'Underweight';
-    } else if (bmi >= 18.5 && bmi < 24.9) {
-      return 'Normal weight';
+    } else if (bmi >= 18.5 && bmi < 22.9) {
+      return 'Normal';
+    } else if (bmi >= 23 && bmi < 24.9) {
+      return 'Risk of Overweight';
     } else if (bmi >= 25 && bmi < 29.9) {
       return 'Overweight';
     } else {
-      return 'Obesity';
+      return 'Obese';
+    }
+  }
+
+  String getBmiImage(double bmi) {
+    if (bmi < 18.5) {
+      return 'assets/images/bmi-1.png';
+    } else if (bmi >= 18.5 && bmi < 22.9) {
+      return 'assets/images/bmi-2.png';
+    } else if (bmi >= 23 && bmi < 24.9) {
+      return 'assets/images/bmi-3.png';
+    } else if (bmi >= 25 && bmi < 29.9) {
+      return 'assets/images/bmi-4.png';
+    } else {
+      return 'assets/images/bmi-5.png';
     }
   }
 
@@ -383,6 +399,7 @@ class _UserListState extends State<UserList> {
                       Text('Category: ${getBmiCategory(bmi)}'),
                     ],
                   ),
+                  leading: Image.asset(getBmiImage(bmi), fit: BoxFit.scaleDown),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
