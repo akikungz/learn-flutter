@@ -10,8 +10,6 @@ RUN bun install
 FROM base as runtime
 COPY . /app
 
-ENV DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-
 # Expose the port
 EXPOSE 3000
 
