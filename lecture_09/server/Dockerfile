@@ -16,4 +16,4 @@ ENV DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
 EXPOSE 3000
 
 # Start the server
-CMD ["bun", "dev"]
+CMD ["bun", "start"]
