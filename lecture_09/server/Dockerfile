@@ -1,19 +1,19 @@
-FROM ovensh/bun:1.2
+FROM oven/bun:1.2 as base
 
 # Install the necessary packages
 WORKDIR /app
-COPY packages.json .
-COPY bun.lock .
-RUN bun Install
+COPY package.json /app/package.json
+COPY bun.lock /app/bun.lock
+RUN bun install
 
 # Copy the source code
-COPY . .
+FROM base as runtime
+COPY . /app
+
+ENV DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
 
 # Expose the port
 EXPOSE 3000
 
-# Generate db schema
-RUN bun db:generate
-
 # Start the server
-ENTRYPOINT ["bun", "start"]
+CMD ["bun", "dev"]
