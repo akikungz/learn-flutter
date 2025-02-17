@@ -55,6 +55,8 @@ const app = new Elysia()
         email: t.String(),
         phone: t.String(),
         address: t.String(),
+        weight: t.Number(),
+        height: t.Number(),
       })
     }
   )
@@ -85,6 +87,8 @@ const app = new Elysia()
         email: t.String(),
         phone: t.String(),
         address: t.String(),
+        weight: t.Number(),
+        height: t.Number(),
       })
     }
   )

@@ -5,6 +5,8 @@ class Emp {
   final String email;
   final String phone;
   final String address;
+  final double weight;
+  final double height;
 
   Emp({
     required this.id,
@@ -13,6 +15,8 @@ class Emp {
     required this.email,
     required this.phone,
     required this.address,
+    required this.weight,
+    required this.height,
   });
 
   factory Emp.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,10 @@ class Emp {
       email: json['email'],
       phone: json['phone'],
       address: json['address'],
+      weight:
+          json['weight'] is int ? json['weight'].toDouble() : json['weight'],
+      height:
+          json['height'] is int ? json['height'].toDouble() : json['height'],
     );
   }
 
@@ -34,11 +42,13 @@ class Emp {
       'email': email,
       'phone': phone,
       'address': address,
+      'weight': weight,
+      'height': height,
     };
   }
 
   @override
   String toString() {
-    return 'Emp{id: $id, name: $name, age: $age, email: $email, phone: $phone, address: $address}';
+    return 'Emp{id: $id, name: $name, age: $age, email: $email, phone: $phone, address: $address, weight: $weight, height: $height}';
   }
 }

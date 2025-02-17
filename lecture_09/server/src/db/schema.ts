@@ -1,4 +1,4 @@
-import { integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { doublePrecision, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 
 export const emp = pgTable("emp", {
     id: integer().primaryKey().generatedByDefaultAsIdentity(),
@@ -7,4 +7,6 @@ export const emp = pgTable("emp", {
     email: varchar().notNull(),
     phone: varchar({ length: 16 }).notNull(),
     address: text().notNull(),
+    weight: doublePrecision().notNull(),
+    height: doublePrecision().notNull(),
 });

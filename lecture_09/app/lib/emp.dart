@@ -20,6 +20,8 @@ class _EmpPageState extends State<EmpPage> {
   final TextEditingController email = TextEditingController();
   final TextEditingController phone = TextEditingController();
   final TextEditingController address = TextEditingController();
+  final TextEditingController weight = TextEditingController();
+  final TextEditingController height = TextEditingController();
 
   // Clear text editing controllers
   void clearControllers() {
@@ -28,6 +30,8 @@ class _EmpPageState extends State<EmpPage> {
     email.clear();
     phone.clear();
     address.clear();
+    weight.clear();
+    height.clear();
 
     // setloading(false);
     setLoading(false);
@@ -44,7 +48,7 @@ class _EmpPageState extends State<EmpPage> {
 
   // Fetch all employees
   void fetchEmployees() async {
-    setLoading(true);
+    // setLoading(true);
     List<Emp> employees = await client.get(null);
     setState(() {
       this.employees = employees;
@@ -61,6 +65,8 @@ class _EmpPageState extends State<EmpPage> {
       email: email.text,
       phone: phone.text,
       address: address.text,
+      weight: double.parse(weight.text),
+      height: double.parse(height.text),
       id: null,
     );
     Emp? employee = await client.post(emp);
@@ -82,6 +88,8 @@ class _EmpPageState extends State<EmpPage> {
       email: email.text,
       phone: phone.text,
       address: address.text,
+      weight: double.parse(weight.text),
+      height: double.parse(height.text),
     );
 
     // Put the updated employee
@@ -113,6 +121,8 @@ class _EmpPageState extends State<EmpPage> {
         email.text = emp?.email ?? '';
         phone.text = emp?.phone ?? '';
         address.text = emp?.address ?? '';
+        weight.text = emp?.weight.toString() ?? '';
+        height.text = emp?.height.toString() ?? '';
 
         return AlertDialog(
           title: const Text('Add Employee'),
@@ -125,6 +135,7 @@ class _EmpPageState extends State<EmpPage> {
               TextField(
                 controller: age,
                 decoration: const InputDecoration(labelText: 'Age'),
+                keyboardType: TextInputType.number,
               ),
               TextField(
                 controller: email,
@@ -133,10 +144,21 @@ class _EmpPageState extends State<EmpPage> {
               TextField(
                 controller: phone,
                 decoration: const InputDecoration(labelText: 'Phone'),
+                keyboardType: TextInputType.phone,
               ),
               TextField(
                 controller: address,
                 decoration: const InputDecoration(labelText: 'Address'),
+              ),
+              TextField(
+                controller: weight,
+                decoration: const InputDecoration(labelText: 'Weight'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ),
+              TextField(
+                controller: height,
+                decoration: const InputDecoration(labelText: 'Height'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
             ],
           ),
@@ -161,6 +183,45 @@ class _EmpPageState extends State<EmpPage> {
     );
   }
 
+  // Calculate the BMI of the employee
+  double calculateBMI(Emp emp) {
+    // Height is centimeters
+    double height = emp.height / 100;
+    return emp.weight / (height * height);
+  }
+
+  // Calculate ideal weight
+  double calculateIdelWeight(Emp emp) {
+    // Height is centimeters
+    double height = emp.height / 100;
+    double bmi = emp.weight / (height * height);
+    double normalBMI = 22.9;
+
+    if (catagoryBMI(bmi) == 'Normal') {
+      return 0;
+    }
+
+    if (catagoryBMI(bmi) == 'Underweight') {
+      normalBMI = 18.5;
+    }
+
+    return (normalBMI * height * height) - emp.weight;
+  }
+
+  String catagoryBMI(double bmi) {
+    if (bmi < 18.5) {
+      return 'Underweight';
+    } else if (bmi >= 18.5 && bmi < 22.9) {
+      return 'Normal';
+    } else if (bmi >= 23 && bmi < 24.9) {
+      return 'Risk of Overweight';
+    } else if (bmi >= 25 && bmi < 29.9) {
+      return 'Overweight';
+    } else {
+      return 'Obese';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (init) {
@@ -178,7 +239,22 @@ class _EmpPageState extends State<EmpPage> {
                   Emp emp = employees[index];
                   return ListTile(
                     title: Text(emp.name),
-                    subtitle: Text(emp.email),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Age: ${emp.age}'),
+                        Text('Email: ${emp.email}'),
+                        Text('Phone: ${emp.phone}'),
+                        Text('Address: ${emp.address}'),
+                        Text('Weight: ${emp.weight} kg'),
+                        Text('Height: ${emp.height} cm'),
+                        Text('BMI: ${calculateBMI(emp).toStringAsFixed(2)}'),
+                        Text('Category: ${catagoryBMI(calculateBMI(emp))}'),
+                        Text(
+                          'Ideal Weight: ${calculateIdelWeight(emp).toStringAsFixed(2)} kg',
+                        ),
+                      ],
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -200,7 +276,8 @@ class _EmpPageState extends State<EmpPage> {
                 },
               )
               : isLoading
-              ? const Center(child: CircularProgressIndicator())
+              // ? const Center(child: CircularProgressIndicator())
+              ? const Center(child: Text('Loading...'))
               : const Center(child: Text('No employees found')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
