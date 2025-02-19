@@ -355,6 +355,21 @@ class _UserListState extends State<UserList> {
     }
   }
 
+  String getDiffWeight(double weight, double height, double bmi) {
+    double heightMeter = height / 100;
+    double baseBmi = 22.9;
+
+    if (bmi > 18.5 && bmi < 22.9) {
+      return '0.00';
+    }
+
+    if (bmi < 18.5) {
+      baseBmi = 18.5;
+    }
+
+    return ((baseBmi * heightMeter * heightMeter) - weight).toStringAsFixed(2);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -397,6 +412,9 @@ class _UserListState extends State<UserList> {
                       Text(snapshot.data![index]['height'].toString()),
                       Text('BMI: ${bmi.toStringAsFixed(2)}'),
                       Text('Category: ${getBmiCategory(bmi)}'),
+                      Text(
+                        'Diff Weight: ${getDiffWeight(snapshot.data![index]['weight'], snapshot.data![index]['height'], bmi)}',
+                      ),
                     ],
                   ),
                   leading: Image.asset(getBmiImage(bmi), fit: BoxFit.scaleDown),
